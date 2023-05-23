@@ -1,47 +1,87 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
+  <div class="card flex-1 align-content-start card-container">
+    <DataTable
+      v-model:filters="filters"
+      :globalFilterFields="['login', 'name', 'phone', 'mail']"
+      :value="users"
+      :loading="loading"
+      class="p-datatable-sm"
+      stripedRows
+    >
+      <template #header>
+        <div class="flex justify-content-between align-content-center">
+          <span class="logo">
+            <Image :src="imgUrl" alt="AO Teplohim" width="210" />
+          </span>
+          <span class="p-input-icon-left">
+            <i class="pi pi-search" />
+            <InputText v-model="filters['global'].value" class="w-30rem" placeholder="Поиск" />
+          </span>
+          <span>
+            <ToggleButton
+              @change="setTheme()"
+              v-model="value"
+              onLabel=""
+              offLabel=""
+              onIcon="pi pi-sun"
+              offIcon="pi pi-moon"
+              outlined
+            />
+          </span>
+        </div>
+      </template>
+      <template #loading>Загрузка данных...</template>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-  </main>
+      <Column field="login" header="Логин"></Column>
+      <Column field="name" header="Имя"></Column>
+      <Column field="phone" header="Телефон"></Column>
+      <Column field="mail" header="E-mail"></Column>
+      <Column field="mashine" header="LLM"></Column>
+    </DataTable>
+  </div>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
+<script setup>
+import { ref, onMounted, computed } from 'vue'
+import { FilterMatchMode } from 'primevue/api'
+import { useUserStore } from './stores/users'
+import { usePrimeVue } from 'primevue/config'
+import { useCookies } from 'vue3-cookies'
+
+const PrimeVue = usePrimeVue()
+const store = useUserStore()
+const { cookies } = useCookies()
+const imgUrl = new URL('./assets/orig.png', import.meta.url).href
+
+const value = ref(false)
+const loading = ref(true)
+
+const users = computed(() => {
+  return store.users
+})
+const onChange = (val) => {
+  let aval = val == 'vela-green' ? 'saga-blue' : 'vela-green'
+  PrimeVue.changeTheme(aval, val, 'theme-link', () => {})
+}
+const setTheme = () => {
+  if (value.value) {
+    cookies.set('theme', 'vela-green')
+  } else {
+    cookies.set('theme', 'saga-blue')
+  }
+  onChange(cookies.get('theme'))
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
+onMounted(() => {
+  let theme = cookies.get('theme')
+  if (theme == 'vela-green') value.value = true
+  onChange(theme)
 
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-}
-</style>
+  store.fetchUsers()
+  loading.value = false
+})
+const filters = ref({
+  global: { value: null, matchMode: FilterMatchMode.STARTS_WITH }
+})
+</script>
+<style scoped></style>
