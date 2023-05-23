@@ -15,7 +15,7 @@ export const useUserStore = defineStore('user', {
       let config = {
         method: 'get',
         maxBodyLength: Infinity,
-        url: 'http://10.0.0.100/univention/udm/users/user/?query*=*',
+        url: 'https://dc-master.teplohim.com/univention/udm/users/user/?query*=*',
         headers: {
           Accept: 'application/json',
           Authorization: 'Basic QWRtaW5pc3RyYXRvcjpnb2hub3gzcw=='
