@@ -7,6 +7,7 @@
       :loading="loading"
       class="p-datatable-sm"
       stripedRows
+      selectionMode="single"
     >
       <template #header>
         <div class="flex justify-content-between align-content-center">
@@ -25,7 +26,6 @@
               offLabel=""
               onIcon="pi pi-sun"
               offIcon="pi pi-moon"
-              outlined
             />
           </span>
         </div>
@@ -35,7 +35,21 @@
       <Column field="login" header="Логин"></Column>
       <Column field="name" header="Имя"></Column>
       <Column field="phone" header="Телефон"></Column>
-      <Column field="mail" header="E-mail"></Column>
+      <Column header="E-mail">
+        <template #body="slotProps">
+          <div class="flex align-items-center justify-content-left">
+            <span>{{ slotProps.data.mail }}</span>
+            <!-- {{ slotProps.data.country.name  }} -->
+            <Button
+              v-tooltip.bottom="{ value: 'Скопировать в буфер', class: 'doc-section-code-tooltip' }"
+              type="button"
+              @click="onCopy(slotProps.data.mail)"
+              class="p-button-rounded p-button-text p-button-plain h-2rem w-2rem p-0 inline-flex align-items-center justify-content-center"
+              icon="pi pi-copy"
+            ></Button>
+          </div>
+        </template>
+      </Column>
       <Column field="mashine" header="LLM"></Column>
     </DataTable>
   </div>
@@ -60,12 +74,16 @@ const users = computed(() => {
   return store.users
 })
 const onChange = (val) => {
-  let aval = val == 'vela-green' ? 'saga-blue' : 'vela-green'
+  let aval = val == 'arya-blue' ? 'saga-blue' : 'arya-blue'
   PrimeVue.changeTheme(aval, val, 'theme-link', () => {})
+}
+const onCopy = (val) => {
+  //console.log(val)
+  navigator.clipboard.writeText(val)
 }
 const setTheme = () => {
   if (value.value) {
-    cookies.set('theme', 'vela-green')
+    cookies.set('theme', 'arya-blue')
   } else {
     cookies.set('theme', 'saga-blue')
   }
@@ -74,7 +92,7 @@ const setTheme = () => {
 
 onMounted(() => {
   let theme = cookies.get('theme')
-  if (theme == 'vela-green') value.value = true
+  if (theme == 'arya-blue') value.value = true
   onChange(theme)
 
   store.fetchUsers()
