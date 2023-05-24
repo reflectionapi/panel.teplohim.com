@@ -8,6 +8,8 @@
       class="p-datatable-sm"
       stripedRows
       selectionMode="single"
+      sortField="name"
+      :sortOrder="1"
     >
       <template #header>
         <div class="flex justify-content-between align-content-center">
@@ -33,7 +35,7 @@
       <template #loading>Загрузка данных...</template>
 
       <Column field="login" header="Логин"></Column>
-      <Column field="name" header="Имя"></Column>
+      <Column field="name" sortable header="Имя"></Column>
       <Column field="phone" header="Телефон"></Column>
       <Column header="E-mail">
         <template #body="slotProps">

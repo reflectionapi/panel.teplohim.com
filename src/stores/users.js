@@ -40,6 +40,8 @@ export const useUserStore = defineStore('user', {
               el.id != 'Info' &&
               el.id != 'admin' &&
               el.id != 'Administrator' &&
+              el.id != 'Help' &&
+              el.id != 'backup' &&
               el.properties.disabled != true
             ) {
               data.push({
