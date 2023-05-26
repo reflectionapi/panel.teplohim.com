@@ -49,6 +49,7 @@ export const useUserStore = defineStore('user', {
                 name: el.properties.lastname + ' ' + el.properties.firstname,
                 mail: el.properties.mailPrimaryAddress,
                 phone: el.properties.phone[0],
+                otdel: el.properties.employeeType,
                 mashine: el.properties.LastLoginMachine
               })
             }

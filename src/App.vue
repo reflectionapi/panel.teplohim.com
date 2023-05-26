@@ -2,7 +2,7 @@
   <div class="card flex-1 align-content-start card-container">
     <DataTable
       v-model:filters="filters"
-      :globalFilterFields="['login', 'name', 'phone', 'mail']"
+      :globalFilterFields="['login', 'name', 'phone', 'otdel', 'mail']"
       :value="users"
       :loading="loading"
       class="p-datatable-sm"
@@ -19,6 +19,7 @@
           <span class="p-input-icon-left">
             <i class="pi pi-search" />
             <InputText v-model="filters['global'].value" class="w-30rem" placeholder="Поиск" />
+            <Button icon="pi pi-delete-left" @click="onClear" class="ml-2" outlined />
           </span>
           <span>
             <ToggleButton
@@ -37,6 +38,17 @@
       <Column field="login" header="Логин"></Column>
       <Column field="name" sortable header="Имя"></Column>
       <Column field="phone" header="Телефон"></Column>
+      <Column header="Отдел">
+        <template #body="slotProps">
+          <Button
+            :label="slotProps.data.otdel"
+            @click="onSelect(slotProps.data.otdel)"
+            severity="secondary"
+            rounded
+            text
+          />
+        </template>
+      </Column>
       <Column header="E-mail">
         <template #body="slotProps">
           <div class="flex align-items-center justify-content-left">
@@ -46,7 +58,8 @@
               v-tooltip.bottom="{ value: 'Скопировать в буфер', class: 'doc-section-code-tooltip' }"
               type="button"
               @click="onCopy(slotProps.data.mail)"
-              class="p-button-rounded p-button-text p-button-plain h-2rem w-2rem p-0 inline-flex align-items-center justify-content-center"
+              severity="secondary"
+              text
               icon="pi pi-copy"
             ></Button>
           </div>
@@ -71,6 +84,7 @@ const imgUrl = new URL('./assets/orig.png', import.meta.url).href
 
 const value = ref(false)
 const loading = ref(true)
+const search = ref('')
 
 const users = computed(() => {
   return store.users
@@ -82,6 +96,13 @@ const onChange = (val) => {
 const onCopy = (val) => {
   //console.log(val)
   navigator.clipboard.writeText(val)
+}
+const onSelect = (val) => {
+  //search.value = val
+  filters.value.global.value = val
+}
+const onClear = () => {
+  filters.value.global.value = ''
 }
 const setTheme = () => {
   if (value.value) {
